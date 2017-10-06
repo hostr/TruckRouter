@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MapSolver.Interfaces;
 using MapSolver.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +16,11 @@ namespace MapSolver.Controllers
     [Route("api/[controller]")]
     public class MazeController : Controller
     {
-        public MazeController()
+        private readonly ISolvingService _service;
+
+        public MazeController(ISolvingService service)
         {
-            
+            _service = service;
         }
 
         /// <summary>
@@ -27,26 +30,18 @@ namespace MapSolver.Controllers
         /// <returns>Maze with optimal path to reach destination and amount of steps it took</returns>
         [HttpPost]
         [Route("solveMaze")]
-        public SolveMazeResponse SolveMaze([FromBody] SolveMazeRequest request)
+        public IActionResult SolveMaze([FromBody] SolveMazeRequest request)
         {
+            if (request == null || !request.Maze.Any())
+            {
+                return new BadRequestResult();
+            }
+
             // Solve maze
+            var result = _service.SolveSample(request.Maze);
 
             //Output solution to maze
-            return new SolveMazeResponse
-            {
-                Steps = 14,
-                Solution = new []
-                {
-                    "##########",
-                    "#A@@.#...#",
-                    "#.#@##.#.#",
-                    "#.#@##.#.#",
-                    "#.#@@@@#B#",
-                    "#.#.##@#@#",
-                    "#....#@@@#",
-                    "##########"
-                }
-            };
+            return new JsonResult(result); 
         }
     }
 }
