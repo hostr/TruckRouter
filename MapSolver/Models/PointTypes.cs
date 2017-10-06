@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace MapSolver.Models
 {
-    public class Point
+    public enum PointTypes
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public PointTypes Type { get; set; }
+        Open = '.',
+        Blocked = '#',
+        Start = 'A',
+        Destination = 'B',
+        Solution = '@'
     }
 }

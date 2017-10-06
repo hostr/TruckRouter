@@ -38,7 +38,7 @@ namespace MapSolver.Controllers
             }
 
             // Solve maze
-            var result = _service.SolveSample(request.Maze);
+            var result = _service.Solve(request.Maze);
 
             //Output solution to maze
             return new JsonResult(result); 
