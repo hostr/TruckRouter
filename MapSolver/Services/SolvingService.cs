@@ -79,10 +79,13 @@ namespace MapSolver.Services
             // Contains a list of all points and point types in the maze
             var grid = GetGridFromMaze(maze);
 
+            // Assign start and destination points
             var start = grid.FirstOrDefault(m => m.Type == PointTypes.Start);
             var destination = grid.FirstOrDefault(m => m.Type == PointTypes.Destination);
             
+            // Closed points are points that have already been checked
             var closed = new List<Point>();
+            // Open points are points that need to be checked still
             var open = new List<Point> { start };
 
             var path = new Dictionary<Point, Point>();
@@ -155,25 +158,6 @@ namespace MapSolver.Services
             };
         }
 
-        public SolveMazeResponse SolveSample(string[] maze)
-        {
-            return new SolveMazeResponse
-            {
-                Steps = 14,
-                Solution = new[]
-                {
-                    "##########",
-                    "#A@@.#...#",
-                    "#.#@##.#.#",
-                    "#.#@##.#.#",
-                    "#.#@@@@#B#",
-                    "#.#.##@#@#",
-                    "#....#@@@#",
-                    "##########"
-                }
-            };
-        }
-
         /// <summary>
         /// Getting path from end to start
         /// </summary>
@@ -187,6 +171,14 @@ namespace MapSolver.Services
             while (path.ContainsKey(current))
             {
                 current = path[current];
+
+                if (current.Type == PointTypes.Start)
+                {
+                    totalPath.Add(current);
+
+                    continue;
+                }
+
                 current.Type = PointTypes.Solution;
 
                 totalPath.Add(current);
@@ -214,7 +206,7 @@ namespace MapSolver.Services
             {
                 var existingGridPoint = grid.First(m => m.X == point.X && m.Y == point.Y);
 
-                if (existingGridPoint.Type == PointTypes.Start || existingGridPoint.Type == PointTypes.Destination)
+                if (existingGridPoint.Type == PointTypes.Destination)
                 {
                     continue;
                 }
@@ -223,7 +215,9 @@ namespace MapSolver.Services
             }
 
             // Rebuild maze from grid
-            var solutionMaze = new string[grid.Max(m => m.Y)];
+            var rowCount = grid.Max(m => m.Y) + 1;
+            var solutionMaze = new string[rowCount];
+
             for (var i = 0; i < solutionMaze.Length; i++)
             {
                 var rowPoints = grid.Where(m => m.Y == i);
