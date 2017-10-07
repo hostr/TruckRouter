@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -9,6 +10,7 @@ using MapSolver.Interfaces;
 using MapSolver.Models;
 using MapSolver.Models.Providers;
 using MapSolver.ViewModels;
+using Newtonsoft.Json;
 
 namespace MapSolver.Services
 {
@@ -147,6 +149,14 @@ namespace MapSolver.Services
                     gScore[neighborPoint] = testGScore;
                     fScore[neighborPoint] = gScore[neighborPoint] + CalculateManhattanHeuristic(neighborPoint, destination);
                 }
+
+                var currentPath = ReconstructPath(path, current);
+                var currentMaze = ReconstructMazeWithPath(grid, currentPath);
+                foreach (var row in currentMaze)
+                {
+                    Debug.WriteLine(row);
+                }
+                Debug.WriteLine(string.Empty);
             }
 
             // If it gets to this point it means the maze wasn't solveable
