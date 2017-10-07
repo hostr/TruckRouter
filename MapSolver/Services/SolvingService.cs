@@ -7,12 +7,20 @@ using System.Text;
 using System.Threading.Tasks;
 using MapSolver.Interfaces;
 using MapSolver.Models;
+using MapSolver.Models.Providers;
 using MapSolver.ViewModels;
 
 namespace MapSolver.Services
 {
     public class SolvingService : ISolvingService
     {
+        private readonly INeighborProvider _neighborProvider;
+
+        public SolvingService(INeighborProvider neighborProvider)
+        {
+            _neighborProvider = neighborProvider;
+        }
+
         /// <summary>
         /// Helper method to calculate F score in A* algorithm
         /// http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
@@ -23,6 +31,17 @@ namespace MapSolver.Services
         private static double CalculateManhattanHeuristic(Point from, Point to)
         {
             return Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y);
+        }
+
+        /// <summary>
+        /// Helper method to calculate G score in A* algorithm
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns>Distance from one point to another</returns>
+        private static double CalculatePythagoreasDistance(Point from, Point to)
+        {
+            return Math.Sqrt(Math.Pow(to.X - from.X, 2) + Math.Pow(to.Y - from.Y, 2));
         }
 
         private List<Point> GetGridFromMaze(string[] maze)
@@ -61,7 +80,7 @@ namespace MapSolver.Services
             var grid = GetGridFromMaze(maze);
 
             var start = grid.FirstOrDefault(m => m.Type == PointTypes.Start);
-            var end = grid.FirstOrDefault(m => m.Type == PointTypes.Start);
+            var destination = grid.FirstOrDefault(m => m.Type == PointTypes.Destination);
             
             var closed = new List<Point>();
             var open = new List<Point> { start };
@@ -69,7 +88,7 @@ namespace MapSolver.Services
             var path = new Dictionary<Point, Point>();
 
             var gScore = new Dictionary<Point, double> { [start] = 0 };
-            var fScore = new Dictionary<Point, double> { [start] = CalculateManhattanHeuristic(start, end) };
+            var fScore = new Dictionary<Point, double> { [start] = CalculateManhattanHeuristic(start, destination) };
 
             while (open.Any())
             {
@@ -81,7 +100,7 @@ namespace MapSolver.Services
                     var solutionPath = ReconstructPath(path, current).ToList();
 
                     // Reconstruct maze with new path
-                    var solution = ReconstructMazeWithPath(maze, solutionPath);
+                    var solution = ReconstructMazeWithPath(grid, solutionPath);
 
                     // Return SolveMazeResponse with steps and solution maze
                     return new SolveMazeResponse
@@ -93,10 +112,47 @@ namespace MapSolver.Services
 
                 open.Remove(current);
                 closed.Add(current);
+
+                foreach (var neighbor in _neighborProvider.GetNeighbors(current))
+                {
+                    var neighborPoint = grid.FirstOrDefault(m => m.X == neighbor.X && m.Y == neighbor.Y);
+
+                    // Point is out of bounds of the maze
+                    if (neighborPoint == null )
+                    {
+                        continue;
+                    }
+
+                    // Already exists in closed, neighbor out of bounds, or neighbor is blocked
+                    if (closed.Contains(neighborPoint) || neighborPoint.Type == PointTypes.Blocked)
+                    {
+                        continue;
+                    }
+
+                    var testGScore = gScore[current] + CalculatePythagoreasDistance(current, neighborPoint);
+
+                    if (!open.Contains(neighborPoint))
+                    {
+                        open.Add(neighborPoint);
+                    } else if (testGScore >= gScore[neighborPoint])
+                    {
+                        continue;
+                    }
+
+                    path[neighborPoint] = current;
+
+                    gScore[neighborPoint] = testGScore;
+                    fScore[neighborPoint] = gScore[neighborPoint] + CalculateManhattanHeuristic(neighborPoint, destination);
+                }
             }
 
-
-            return new SolveMazeResponse();
+            // If it gets to this point it means the maze wasn't solveable
+            // Return 0, empty solution
+            return new SolveMazeResponse
+            {
+                Steps = 0,
+                Solution = new string[0]
+            };
         }
 
         public SolveMazeResponse SolveSample(string[] maze)
@@ -157,6 +213,12 @@ namespace MapSolver.Services
             foreach (var point in solutionPath)
             {
                 var existingGridPoint = grid.First(m => m.X == point.X && m.Y == point.Y);
+
+                if (existingGridPoint.Type == PointTypes.Start || existingGridPoint.Type == PointTypes.Destination)
+                {
+                    continue;
+                }
+
                 existingGridPoint.Type = PointTypes.Solution;
             }
 

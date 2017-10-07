@@ -32,13 +32,13 @@ namespace MapSolver.Controllers
         [Route("solveMaze")]
         public IActionResult SolveMaze([FromBody] SolveMazeRequest request)
         {
-            if (request == null || !request.Maze.Any())
+            if (request == null || !request.Map.Any())
             {
                 return new BadRequestResult();
             }
 
             // Solve maze
-            var result = _service.Solve(request.Maze);
+            var result = _service.Solve(request.Map);
 
             //Output solution to maze
             return new JsonResult(result); 

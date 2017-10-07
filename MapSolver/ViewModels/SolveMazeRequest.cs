@@ -9,6 +9,6 @@ namespace MapSolver.ViewModels
 {
     public class SolveMazeRequest
     {
-        public string[] Maze { get; set; }
+        public string[] Map { get; set; }
     }
 }

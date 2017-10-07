@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MapSolver.Interfaces;
+using MapSolver.Models.Providers;
 using MapSolver.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,7 @@ namespace MapSolver
 
             // Application services
             services.AddScoped<ISolvingService, SolvingService>();
+            services.AddScoped<INeighborProvider, VerticalHorizontalNeighborProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
