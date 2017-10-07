@@ -10,6 +10,5 @@ namespace MapSolver.Interfaces
     public interface ISolvingService
     {
         SolveMazeResponse Solve(string[] maze);
-        SolveMazeResponse SolveSample(string[] maze);
     }
 }
