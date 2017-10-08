@@ -6,9 +6,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using MapSolver.Algorithms;
 using MapSolver.Interfaces;
 using MapSolver.Models;
-using MapSolver.Models.Providers;
+using MapSolver.Providers;
 using MapSolver.ViewModels;
 using Newtonsoft.Json;
 
@@ -18,32 +19,12 @@ namespace MapSolver.Services
     {
         private readonly INeighborProvider _neighborProvider;
 
-        public SolvingService(INeighborProvider neighborProvider)
+        private readonly Func<string, IDistanceAlgorithm> _distanceAlgorithmAccessor;
+
+        public SolvingService(INeighborProvider neighborProvider, Func<string, IDistanceAlgorithm> distanceAlgorithmAccessor)
         {
             _neighborProvider = neighborProvider;
-        }
-
-        /// <summary>
-        /// Helper method to calculate F score in A* algorithm
-        /// http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
-        /// </summary>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <returns>Distance from one point to another</returns>
-        private static double CalculateManhattanHeuristic(Point from, Point to)
-        {
-            return Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y);
-        }
-
-        /// <summary>
-        /// Helper method to calculate G score in A* algorithm
-        /// </summary>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <returns>Distance from one point to another</returns>
-        private static double CalculatePythagoreasDistance(Point from, Point to)
-        {
-            return Math.Sqrt(Math.Pow(to.X - from.X, 2) + Math.Pow(to.Y - from.Y, 2));
+            _distanceAlgorithmAccessor = distanceAlgorithmAccessor;
         }
 
         private List<Point> GetGridFromMaze(string[] maze)
@@ -93,7 +74,10 @@ namespace MapSolver.Services
             var path = new Dictionary<Point, Point>();
 
             var gScore = new Dictionary<Point, double> { [start] = 0 };
-            var fScore = new Dictionary<Point, double> { [start] = CalculateManhattanHeuristic(start, destination) };
+            var fScore = new Dictionary<Point, double>
+            {
+                [start] = _distanceAlgorithmAccessor("Manhattan").Calculate(start, destination)
+            };
 
             while (open.Any())
             {
@@ -134,7 +118,8 @@ namespace MapSolver.Services
                         continue;
                     }
 
-                    var testGScore = gScore[current] + CalculatePythagoreasDistance(current, neighborPoint);
+                    var testGScore = gScore[current] +
+                                     _distanceAlgorithmAccessor("Pythagoreas").Calculate(current, neighborPoint);
 
                     if (!open.Contains(neighborPoint))
                     {
@@ -147,16 +132,18 @@ namespace MapSolver.Services
                     path[neighborPoint] = current;
 
                     gScore[neighborPoint] = testGScore;
-                    fScore[neighborPoint] = gScore[neighborPoint] + CalculateManhattanHeuristic(neighborPoint, destination);
+                    fScore[neighborPoint] = gScore[neighborPoint] +
+                                            _distanceAlgorithmAccessor("Manhattan")
+                                                .Calculate(neighborPoint, destination);
                 }
 
-                var currentPath = ReconstructPath(path, current);
-                var currentMaze = ReconstructMazeWithPath(grid, currentPath);
-                foreach (var row in currentMaze)
-                {
-                    Debug.WriteLine(row);
-                }
-                Debug.WriteLine(string.Empty);
+                //var currentPath = ReconstructPath(path, current);
+                //var currentMaze = ReconstructMazeWithPath(grid, currentPath);
+                //foreach (var row in currentMaze)
+                //{
+                //    Debug.WriteLine(row);
+                //}
+                //Debug.WriteLine(string.Empty);
             }
 
             // If it gets to this point it means the maze wasn't solveable

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using MapSolver.Models;
 
-namespace MapSolver.Models.Providers
+namespace MapSolver.Providers
 {
     public interface INeighborProvider
     {

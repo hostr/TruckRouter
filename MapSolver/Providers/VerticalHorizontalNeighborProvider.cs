@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MapSolver.Models;
 
-namespace MapSolver.Models.Providers
+namespace MapSolver.Providers
 {
     public class VerticalHorizontalNeighborProvider : INeighborProvider
     {

@@ -35,3 +35,5 @@ Truck routing API that takes in a maze as JSON and outputs the solved maze.
   ] 
 }
 ```
+
+Credit due to https://github.com/WichardRiezebos/astar-navigator/tree/master/AStarNavigator for implementation of the A* Algorithm.

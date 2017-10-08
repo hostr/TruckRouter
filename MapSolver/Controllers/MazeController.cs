@@ -9,6 +9,7 @@ using MapSolver.Interfaces;
 using MapSolver.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
 namespace MapSolver.Controllers
@@ -17,10 +18,12 @@ namespace MapSolver.Controllers
     public class MazeController : Controller
     {
         private readonly ISolvingService _service;
+        private readonly IMemoryCache _cache;
 
-        public MazeController(ISolvingService service)
+        public MazeController(ISolvingService service, IMemoryCache memoryCache)
         {
             _service = service;
+            _cache = memoryCache;
         }
 
         /// <summary>
@@ -32,16 +35,44 @@ namespace MapSolver.Controllers
         [Route("solveMaze")]
         public IActionResult SolveMaze([FromBody] SolveMazeRequest request)
         {
+            // If request doesn't exist then return a 400 error
             if (request == null || !request.Map.Any())
             {
                 return new BadRequestResult();
             }
 
-            // Solve maze
-            var result = _service.Solve(request.Map);
+            // Convert maze to a single line so we can use it as a caching key
+            var singleLineMaze = string.Join("", request.Map);
 
-            //Output solution to maze
-            return new JsonResult(result); 
+            // If the route has been cached already then use that as the solution
+            if (_cache.TryGetValue(singleLineMaze, out SolveMazeResponse solution))
+            {
+                return new JsonResult(solution);
+            }
+
+            // Solve maze
+            try
+            {
+                var result = _service.Solve(request.Map);
+
+                if (result.Steps != 0)
+                {
+                    // If map get's queried again it will reset the sliding expiration, 
+                    // but eventually the absolute expiration will catch it and expire it
+                    _cache.Set(singleLineMaze, result, new MemoryCacheEntryOptions
+                    {
+                        SlidingExpiration = TimeSpan.FromMinutes(2),
+                        AbsoluteExpiration = 
+                    });
+                }
+
+                //Output solution to maze
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }       
         }
     }
 }

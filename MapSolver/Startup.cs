@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MapSolver.Algorithms;
 using MapSolver.Interfaces;
-using MapSolver.Models.Providers;
+using MapSolver.Providers;
 using MapSolver.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,6 +33,27 @@ namespace MapSolver
             // Application services
             services.AddScoped<ISolvingService, SolvingService>();
             services.AddScoped<INeighborProvider, VerticalHorizontalNeighborProvider>();
+
+            services.AddScoped<ManhattanHeuristicAlgorithm>();
+            services.AddScoped<PythagoreasTheoremAlgorithm>();
+
+            services.AddScoped(factory =>
+            {
+                Func<string, IDistanceAlgorithm> accessor = key =>
+                {
+                    switch (key)
+                    {
+                        case "Manhattan":
+                            return factory.GetService<ManhattanHeuristicAlgorithm>();
+                        case "Pythagoreas":
+                            return factory.GetService<PythagoreasTheoremAlgorithm>();
+                        default:
+                            throw new KeyNotFoundException();
+                    }
+                };
+
+                return accessor;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
