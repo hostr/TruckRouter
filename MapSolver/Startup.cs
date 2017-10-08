@@ -29,6 +29,7 @@ namespace MapSolver
         {
             // Framework services
             services.AddMvc();
+            services.AddMemoryCache();
 
             // Application services
             services.AddScoped<ISolvingService, SolvingService>();
