@@ -62,7 +62,7 @@ namespace MapSolver.Controllers
                     _cache.Set(singleLineMaze, result, new MemoryCacheEntryOptions
                     {
                         SlidingExpiration = TimeSpan.FromMinutes(2),
-                        AbsoluteExpiration = 
+                        AbsoluteExpiration = DateTime.Now.AddMinutes(5)
                     });
                 }
 
