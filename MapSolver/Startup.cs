@@ -34,7 +34,6 @@ namespace MapSolver
             // Application services
             services.AddScoped<ISolvingService, SolvingService>();
             services.AddScoped<INeighborProvider, VerticalHorizontalNeighborProvider>();
-
             services.AddScoped<IHeuristicAlgorithm, ManhattanHeuristicAlgorithm>();
             services.AddScoped<IDistanceAlgorithm, PythagoreasTheoremAlgorithm>();
         }

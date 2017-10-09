@@ -5,7 +5,13 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapSolver", "MapSolver\MapSolver.csproj", "{F4CFE366-74C2-4A71-83DA-E2AAD034E139}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapSolver.Tests", "MapSolver.Tests\MapSolver.Tests.csproj", "{5964465F-38BE-4735-AF78-73A810299554}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapSolver.Tests", "MapSolver.Tests\MapSolver.Tests.csproj", "{5964465F-38BE-4735-AF78-73A810299554}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{357EE663-5680-4630-8590-0DDE1AE1B555}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
