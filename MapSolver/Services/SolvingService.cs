@@ -33,6 +33,9 @@ namespace MapSolver.Services
         {
             var grid = new List<Point>();
 
+            bool hasStartingPoint = false;
+            bool hasDestinationPoint = false;
+
             for (var i = 0; i < maze.Length; i++)
             {
                 for (var j = 0; j < maze[i].Length; j++)
@@ -45,6 +48,11 @@ namespace MapSolver.Services
                         throw new DataException();
                     }
 
+                    if (character == (int) PointTypes.Start)
+                        hasStartingPoint = true;
+                    if (character == (int) PointTypes.Destination)
+                        hasDestinationPoint = true;
+
                     grid.Add(new Point(j, i)
                     {
                         Type = (PointTypes) character
@@ -52,7 +60,11 @@ namespace MapSolver.Services
                 }
             }
 
-            // Should ensure grid is valid somewhere in here (contains a start, finish, and open)
+            // Could do much more validation here if required
+            if (!hasStartingPoint || !hasDestinationPoint)
+            {
+                throw new ArgumentException("Grid is missing starting point or destination point");
+            }
 
             return grid;
         }
@@ -136,14 +148,6 @@ namespace MapSolver.Services
                                             _heuristicAlgorithm
                                                 .Calculate(neighborPoint, destination);
                 }
-
-                //var currentPath = ReconstructPath(path, current);
-                //var currentMaze = ReconstructMazeWithPath(grid, currentPath);
-                //foreach (var row in currentMaze)
-                //{
-                //    Debug.WriteLine(row);
-                //}
-                //Debug.WriteLine(string.Empty);
             }
 
             // If it gets to this point it means the maze wasn't solveable
