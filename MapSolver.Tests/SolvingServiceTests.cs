@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using MapSolver.Algorithms;
 using MapSolver.Interfaces;
 using MapSolver.Providers;
 using MapSolver.Services;
@@ -13,12 +16,14 @@ namespace MapSolver.Tests
 
         public SolvingServiceTests()
         {
-            _service = new SolvingService(new VerticalHorizontalNeighborProvider());
+            _service = new SolvingService(
+                new VerticalHorizontalNeighborProvider(), 
+                new ManhattanHeuristicAlgorithm(),
+                new PythagoreasTheoremAlgorithm());
         }
 
-
         [TestMethod]
-        public void SolveUnsolveableMaze()
+        public void Solve_WithUnsolveableMaze_ReturnExpectedResult()
         {
             var mazeToSolve = new[]
             {
@@ -35,12 +40,12 @@ namespace MapSolver.Tests
             var result = _service.Solve(mazeToSolve);
 
             // Unsolveable mazes will return 0 steps and empty solution
-            Assert.Equals(result.Steps, 0);
-            Assert.Equals(result.Solution.Length, 0);
+            Assert.IsTrue(result.Steps == 0);
+            Assert.IsTrue(result.Solution.Length == 0);
         }
 
         [TestMethod]
-        public void SolveSolveableMaze()
+        public void Solve_WithSolveableMaze_ReturnExpectedResult()
         {
             var mazeToSolve = new[]
             {
@@ -55,9 +60,8 @@ namespace MapSolver.Tests
             };
 
             var result = _service.Solve(mazeToSolve);
-            
-            Assert.Equals(result.Steps, 14);
-            Assert.Equals(result.Solution, new []
+
+            var expected = new[]
             {
                 "##########",
                 "#A@@.#...#",
@@ -67,7 +71,10 @@ namespace MapSolver.Tests
                 "#.#.##@#@#",
                 "#....#@@@#",
                 "##########"
-            });
+            };
+
+            Assert.IsTrue(result.Steps == 14);
+            Assert.IsTrue(result.Solution.SequenceEqual(expected));
         }
     }
 }

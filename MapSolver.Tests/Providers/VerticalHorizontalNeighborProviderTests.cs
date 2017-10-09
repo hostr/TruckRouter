@@ -29,7 +29,7 @@ namespace MapSolver.Tests.Providers
                 new Point(0, 1)
             };
 
-            Assert.Equals(result, expected);
+            Assert.IsTrue(result.SequenceEqual(expected));
         }
     }
 }

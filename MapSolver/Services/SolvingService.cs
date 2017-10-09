@@ -18,16 +18,18 @@ namespace MapSolver.Services
     public class SolvingService : ISolvingService
     {
         private readonly INeighborProvider _neighborProvider;
+        private readonly IHeuristicAlgorithm _heuristicAlgorithm;
+        private readonly IDistanceAlgorithm _distanceAlgorithm;
 
-        private readonly Func<string, IDistanceAlgorithm> _distanceAlgorithmAccessor;
-
-        public SolvingService(INeighborProvider neighborProvider, Func<string, IDistanceAlgorithm> distanceAlgorithmAccessor)
+        public SolvingService(INeighborProvider neighborProvider, IHeuristicAlgorithm heuristicAlgorithm,
+            IDistanceAlgorithm distanceAlgorithm)
         {
             _neighborProvider = neighborProvider;
-            _distanceAlgorithmAccessor = distanceAlgorithmAccessor;
+            _heuristicAlgorithm = heuristicAlgorithm;
+            _distanceAlgorithm = distanceAlgorithm;
         }
 
-        private List<Point> GetGridFromMaze(string[] maze)
+        private static List<Point> GetGridFromMaze(string[] maze)
         {
             var grid = new List<Point>();
 
@@ -74,7 +76,7 @@ namespace MapSolver.Services
             var gScore = new Dictionary<Point, double> { [start] = 0 };
             var fScore = new Dictionary<Point, double>
             {
-                [start] = _distanceAlgorithmAccessor("Manhattan").Calculate(start, destination)
+                [start] = _heuristicAlgorithm.Calculate(start, destination)
             };
 
             while (open.Any())
@@ -117,7 +119,7 @@ namespace MapSolver.Services
                     }
 
                     var testGScore = gScore[current] +
-                                     _distanceAlgorithmAccessor("Pythagoreas").Calculate(current, neighborPoint);
+                                     _distanceAlgorithm.Calculate(current, neighborPoint);
 
                     if (!open.Contains(neighborPoint))
                     {
@@ -131,7 +133,7 @@ namespace MapSolver.Services
 
                     gScore[neighborPoint] = testGScore;
                     fScore[neighborPoint] = gScore[neighborPoint] +
-                                            _distanceAlgorithmAccessor("Manhattan")
+                                            _heuristicAlgorithm
                                                 .Calculate(neighborPoint, destination);
                 }
 

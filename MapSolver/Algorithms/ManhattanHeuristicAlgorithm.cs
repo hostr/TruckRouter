@@ -7,10 +7,11 @@ using MapSolver.Models;
 
 namespace MapSolver.Algorithms
 {
-    public class ManhattanHeuristicAlgorithm : IDistanceAlgorithm
+    public class ManhattanHeuristicAlgorithm : IHeuristicAlgorithm
     {
         /// <summary>
-        /// Helper method to calculate F score in A* algorithm
+        /// Helper method to calculate H score in A* algorithm.
+        /// Sum of absolute values of differences between from and to.
         /// http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
         /// </summary>
         /// <param name="from">Pont to calculate distance from</param>

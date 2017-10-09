@@ -8,6 +8,7 @@ namespace MapSolver.Models
 {
     public enum PointTypes
     {
+        Unknown = 0,
         Open = '.',
         Blocked = '#',
         Start = 'A',

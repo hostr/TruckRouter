@@ -22,7 +22,7 @@ namespace MapSolver.Tests.Algorithms
 
             var result = algorithm.Calculate(from, to);
 
-            Assert.Equals(result, 10);
+            Assert.IsTrue(result == 10);
         }
 
         [TestMethod]
@@ -35,7 +35,7 @@ namespace MapSolver.Tests.Algorithms
 
             var result = algorithm.Calculate(from, to);
 
-            Assert.Equals(result, 20);
+            Assert.IsTrue(result == 20);
         }
     }
 }

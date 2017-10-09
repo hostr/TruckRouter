@@ -8,9 +8,10 @@ using MapSolver.Models;
 namespace MapSolver.Algorithms
 {
     /// <summary>
-    /// Used to calculate G score in A* algorithm
+    /// Used to calculate the H score in A* algorithm
+    /// Possible algorithms are Manhattan, Diagonal, Euclidian, etc
     /// </summary>
-    public interface IDistanceAlgorithm
+    public interface IHeuristicAlgorithm
     {
         double Calculate(Point from, Point to);
     }

@@ -35,26 +35,8 @@ namespace MapSolver
             services.AddScoped<ISolvingService, SolvingService>();
             services.AddScoped<INeighborProvider, VerticalHorizontalNeighborProvider>();
 
-            services.AddScoped<ManhattanHeuristicAlgorithm>();
-            services.AddScoped<PythagoreasTheoremAlgorithm>();
-
-            services.AddScoped(factory =>
-            {
-                Func<string, IDistanceAlgorithm> accessor = key =>
-                {
-                    switch (key)
-                    {
-                        case "Manhattan":
-                            return factory.GetService<ManhattanHeuristicAlgorithm>();
-                        case "Pythagoreas":
-                            return factory.GetService<PythagoreasTheoremAlgorithm>();
-                        default:
-                            throw new KeyNotFoundException();
-                    }
-                };
-
-                return accessor;
-            });
+            services.AddScoped<IHeuristicAlgorithm, ManhattanHeuristicAlgorithm>();
+            services.AddScoped<IDistanceAlgorithm, PythagoreasTheoremAlgorithm>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
