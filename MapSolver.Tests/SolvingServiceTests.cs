@@ -1,5 +1,6 @@
 using System.Linq;
 using MapSolver.Interfaces;
+using MapSolver.Providers;
 using MapSolver.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -12,7 +13,7 @@ namespace MapSolver.Tests
 
         public SolvingServiceTests()
         {
-            _service = new SolvingService();
+            _service = new SolvingService(new VerticalHorizontalNeighborProvider());
         }
 
 
