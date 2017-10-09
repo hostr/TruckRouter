@@ -17,17 +17,19 @@ namespace MapSolver.Tests.Providers
         {
             var provider = new VerticalHorizontalNeighborProvider();
 
-            var point = new Point {X = 1, Y = 1};
+            var point = new Point(1, 1);
 
             var result = provider.GetNeighbors(point);
 
             var expected = new[]
             {
-                new Point {X = 1, Y = 2},
-                new Point {X = 1, Y = 2},
-                new Point {X = 1, Y = 2},
-                new Point {X = 1, Y = 2}
+                new Point(1, 2),
+                new Point(2, 1),
+                new Point(1, 0),
+                new Point(0, 1)
             };
+
+            Assert.Equals(result, expected);
         }
     }
 }

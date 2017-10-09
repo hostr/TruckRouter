@@ -17,20 +17,21 @@ namespace MapSolver.Providers
             { -1, 0 },   // Left
         };
 
+        /// <summary>
+        /// Get the neighbors above, below, and to the sides of a point
+        /// </summary>
+        /// <param name="point">Point to get neighbors from</param>
+        /// <returns>List of neighbors</returns>
         public IEnumerable<Point> GetNeighbors(Point point)
         {
             var neighbors = new List<Point>();
 
             for (var i = 0; i < moves.GetLength(0); i++)
             {
-                var xMove = moves[i, 0];
-                var yMove = moves[i, 1];
+                var neighborX = point.X + moves[i, 0];
+                var neighborY = point.Y + moves[i, 1];
 
-                neighbors.Add(new Point
-                {
-                    X = point.X + moves[i, 0],
-                    Y = point.Y + moves[i, 1]
-                });
+                neighbors.Add(new Point(neighborX, neighborY));
             }
 
             return neighbors;

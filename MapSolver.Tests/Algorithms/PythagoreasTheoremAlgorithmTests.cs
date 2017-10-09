@@ -17,8 +17,8 @@ namespace MapSolver.Tests.Algorithms
         {
             var algorithm = new PythagoreasTheoremAlgorithm();
 
-            var from = new Point { X = 0, Y = 0 };
-            var to = new Point { X = 0, Y = 10 };
+            var from = new Point(0, 0);
+            var to = new Point(0, 10);
 
             var result = algorithm.Calculate(from, to);
 
@@ -30,8 +30,8 @@ namespace MapSolver.Tests.Algorithms
         {
             var algorithm = new PythagoreasTheoremAlgorithm();
 
-            var from = new Point { X = 0, Y = 0 };
-            var to = new Point { X = 3, Y = 4 };
+            var from = new Point(0, 0);
+            var to = new Point(3, 4);
 
             var result = algorithm.Calculate(from, to);
 

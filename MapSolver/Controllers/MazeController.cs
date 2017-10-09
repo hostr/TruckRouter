@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using MapSolver.Interfaces;
 using MapSolver.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 
 namespace MapSolver.Controllers
 {
@@ -71,7 +70,10 @@ namespace MapSolver.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                // Could use external logging service here
+                Debug.WriteLine(ex.Message);
+
+                return new StatusCodeResult((int) HttpStatusCode.InternalServerError);
             }       
         }
     }

@@ -43,10 +43,8 @@ namespace MapSolver.Services
                         throw new DataException();
                     }
 
-                    grid.Add(new Point
+                    grid.Add(new Point(j, i)
                     {
-                        X = j,
-                        Y = i,
                         Type = (PointTypes) character
                     });
                 }
