@@ -118,14 +118,8 @@ namespace MapSolver.Services
                 {
                     var neighborPoint = grid.FirstOrDefault(m => m.X == neighbor.X && m.Y == neighbor.Y);
 
-                    // Point is out of bounds of the maze
-                    if (neighborPoint == null )
-                    {
-                        continue;
-                    }
-
-                    // Already exists in closed, neighbor out of bounds, or neighbor is blocked
-                    if (closed.Contains(neighborPoint) || neighborPoint.Type == PointTypes.Blocked)
+                    // Point is out of bounds, already exists in closed, or is blocked
+                    if (neighborPoint == null || closed.Contains(neighborPoint) || neighborPoint.Type == PointTypes.Blocked)
                     {
                         continue;
                     }
@@ -176,12 +170,10 @@ namespace MapSolver.Services
                 if (current.Type == PointTypes.Start)
                 {
                     totalPath.Add(current);
-
                     continue;
                 }
 
                 current.Type = PointTypes.Solution;
-
                 totalPath.Add(current);
             }
 
