@@ -11,7 +11,7 @@ __Visual Studio__
 ## Sample Request
 - Multiline strings aren't valid JSON so use this [link](http://static.decontextualize.com/lines-to-json/) to convert to a JSON string array
 - Using a string array instead of single string with newline characters so we can keep the nice multiline formatting
-- # is a wall, A is the starting point, B is the destination, and . are open points
+- \# is a wall, A is the starting point, B is the destination, and . are open points
 ```
 {
   "maze": [
